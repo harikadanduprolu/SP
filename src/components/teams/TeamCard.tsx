@@ -22,11 +22,11 @@ export function TeamCard({ team }: TeamCardProps) {
       <div className="flex items-center justify-between text-sm text-gray-500">
         <div className="flex items-center">
           <Users className="h-4 w-4 mr-1" />
-          <span>{team.members.length} members</span>
+          <span>{team.members ? team.members.length : 0} members</span>
         </div>
         <div className="flex items-center">
           <Calendar className="h-4 w-4 mr-1" />
-          <span>Created {formatDate(team.createdAt)}</span>
+          <span>Created {formatDate(new Date(team.created_at))}</span>
         </div>
       </div>
     </div>

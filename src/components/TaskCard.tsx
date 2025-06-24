@@ -80,7 +80,7 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
       <div className="flex items-center gap-4 text-sm text-gray-500">
         <div className="flex items-center gap-1">
           <Calendar className="w-4 h-4" />
-          <span>{formatDate(task.deadline)}</span>
+          <span>{task.deadline ? formatDate(new Date(task.deadline)) : 'No deadline'}</span>
         </div>
         
         {task.tags.length > 0 && (
@@ -90,7 +90,7 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
           </div>
         )}
         
-        {task.comments.length > 0 && (
+        {task.comments && task.comments.length > 0 && (
           <div className="flex items-center gap-1">
             <MessageSquare className="w-4 h-4" />
             <span>{task.comments.length}</span>

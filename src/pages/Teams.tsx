@@ -9,14 +9,16 @@ const mockTeams = [
     name: 'Engineering',
     description: 'Core engineering and development team',
     members: [],
-    createdAt: new Date(),
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   },
   {
     id: '2',
     name: 'Design',
     description: 'UI/UX and product design team',
     members: [],
-    createdAt: new Date(),
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   },
 ];
 

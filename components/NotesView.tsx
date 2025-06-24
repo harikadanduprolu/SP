@@ -16,6 +16,18 @@ import {
   MoreVertical
 } from 'lucide-react';
 
+type Note = {
+  id: number;
+  title: string;
+  content: string;
+  tags: string[];
+  createdAt: string;
+  lastEdited: string;
+  starred: boolean;
+  subject: string;
+  wordCount: number;
+};
+
 export function NotesView() {
   const [notes, setNotes] = useState([
     {
@@ -53,7 +65,7 @@ export function NotesView() {
     }
   ]);
 
-  const [selectedNote, setSelectedNote] = useState(null);
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredNotes = notes.filter(note => 

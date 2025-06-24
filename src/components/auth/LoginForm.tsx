@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { Link, useNavigate } from 'react-router-dom';
 import { signIn } from '../../lib/auth';
 import { useAuthStore } from '../../store';
+import { supabase } from '../../lib/supabase';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -25,7 +26,17 @@ export function LoginForm() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       const { user } = await signIn(data.email, data.password);
-      setUser(user);
+      if (!user) throw new Error('No user returned from signIn');
+
+      // Fetch user profile from 'users' table
+      const { data: profile, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error) throw error;
+      setUser(profile); // profile matches your local User type
       navigate('/');
     } catch (error) {
       setError(error as Error);

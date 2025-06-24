@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { X } from 'lucide-react';
 import type { Task } from '../../types';
 import { useTaskStore } from '../../store/taskStore';
+import { useAuthStore } from '../../store';
 
 const taskSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -21,6 +22,7 @@ interface TaskFormProps {
 
 export function TaskForm({ onClose }: TaskFormProps) {
   const addTask = useTaskStore((state) => state.addTask);
+  const currentUser = useAuthStore((state) => state.user);
   const { register, handleSubmit, formState: { errors } } = useForm<TaskFormData>({
     resolver: zodResolver(taskSchema),
   });
@@ -32,11 +34,13 @@ export function TaskForm({ onClose }: TaskFormProps) {
       description: data.description,
       status: 'pending',
       tags: data.tags.split(',').map(tag => tag.trim()).filter(Boolean),
-      deadline: new Date(data.deadline),
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      deadline: new Date(data.deadline).toISOString(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
       attachments: [],
       comments: [],
+      priority: 'medium',
+      creator_id: currentUser?.id || '',
     };
     
     addTask(newTask);

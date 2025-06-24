@@ -9,11 +9,7 @@ export async function uploadAttachment(
   const fileName = `${crypto.randomUUID()}-${file.name}`;
   const { data, error } = await supabase.storage
     .from('task-attachments')
-    .upload(fileName, file, {
-      onUploadProgress: ({ loaded, total }) => {
-        onProgress?.(Math.round((loaded / total) * 100));
-      },
-    });
+    .upload(fileName, file);
 
   if (error) throw error;
 

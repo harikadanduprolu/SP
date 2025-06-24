@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { Link, useNavigate } from 'react-router-dom';
 import { signUp } from '../../lib/auth';
 import { useAuthStore } from '../../store';
+import { supabase } from '../../lib/supabase';
 
 const signupSchema = z.object({
   fullName: z.string().min(2, 'Full name must be at least 2 characters'),
@@ -30,7 +31,17 @@ export function SignupForm() {
   const onSubmit = async (data: SignupFormData) => {
     try {
       const { user } = await signUp(data.email, data.password, data.fullName);
-      setUser(user);
+      if (!user) throw new Error('No user returned from signUp');
+
+      // Fetch user profile from 'users' table
+      const { data: profile, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error) throw error;
+      setUser(profile); // profile matches your local User type
       navigate('/');
     } catch (error) {
       setError(error as Error);
