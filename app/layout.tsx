@@ -5,8 +5,8 @@ import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Studypie - Smart Study Companion',
-  description: 'AI-powered study app for Gen-Z students with gamified learning experience',
+  title: 'StudyPie - Smart Study Companion',
+  description: 'Organize your study materials and boost your productivity',
 };
 
 export default function RootLayout({
@@ -15,8 +15,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className={inter.className}>{children}</body>
+    <html lang="en">
+      <body className={inter.className}>
+        <div className="min-h-screen bg-[#0D0D0D] text-white">
+          {children}
+        </div>
+      </body>
     </html>
   );
 }

@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { 
   Home, 
   FolderOpen, 
@@ -10,12 +12,11 @@ import {
   Settings,
   Zap,
   Star,
-  Timer
+  Timer,
+  Flame
 } from 'lucide-react';
 
 interface SidebarProps {
-  activeView: string;
-  setActiveView: (view: string) => void;
   userStats: {
     level: number;
     xp: number;
@@ -25,14 +26,16 @@ interface SidebarProps {
   };
 }
 
-export function Sidebar({ activeView, setActiveView, userStats }: SidebarProps) {
+export function Sidebar({ userStats }: SidebarProps) {
+  const pathname = usePathname();
+  
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home },
-    { id: 'workspaces', label: 'Workspaces', icon: FolderOpen },
-    { id: 'notes', label: 'Notes', icon: StickyNote },
-    { id: 'mindmap', label: 'Mind Maps', icon: Brain },
-    { id: 'achievements', label: 'Achievements', icon: Trophy },
-    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: '/', label: 'Dashboard', icon: Home },
+    { id: '/workspaces', label: 'Workspaces', icon: FolderOpen },
+    { id: '/notes', label: 'Notes', icon: StickyNote },
+    { id: '/mindmap', label: 'Mind Maps', icon: Brain },
+    { id: '/achievements', label: 'Achievements', icon: Trophy },
+    { id: '/settings', label: 'Settings', icon: Settings },
   ];
 
   return (
@@ -44,38 +47,41 @@ export function Sidebar({ activeView, setActiveView, userStats }: SidebarProps) 
       </div>
 
       {/* User Stats Card */}
-      <div className="glass rounded-2xl p-4 mb-6 glow-effect">
+      <div className="glass rounded-xl p-4 mb-6">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-violet-400 to-blue-400 flex items-center justify-center text-sm font-bold">
-              L{userStats.level}
+            <div className="w-8 h-8 bg-gradient-to-r from-violet-500 to-blue-500 rounded-full flex items-center justify-center">
+              <span className="text-sm font-bold">L{userStats.level}</span>
             </div>
-            <span className="font-semibold">Level {userStats.level}</span>
+            <div>
+              <div className="text-sm font-medium">Level {userStats.level}</div>
+              <div className="text-xs text-gray-400">{userStats.xp} XP</div>
+            </div>
           </div>
-          <div className="flex items-center gap-1 text-yellow-400">
-            <Star className="w-4 h-4 fill-current" />
-            <span className="text-sm font-medium">{userStats.coins}</span>
+          <div className="text-right">
+            <div className="text-sm font-medium">{userStats.coins}</div>
+            <div className="text-xs text-gray-400">coins</div>
           </div>
         </div>
         
         {/* XP Progress */}
         <div className="mb-3">
           <div className="flex justify-between text-xs text-gray-400 mb-1">
-            <span>XP: {userStats.xp}</span>
-            <span>{userStats.xpToNext} to next level</span>
+            <span>Progress</span>
+            <span>{userStats.xp}/{userStats.xp + userStats.xpToNext}</span>
           </div>
-          <div className="w-full bg-gray-700 rounded-full h-2">
+          <div className="w-full bg-white/10 rounded-full h-2">
             <div 
-              className="bg-gradient-to-r from-violet-400 to-blue-400 h-2 rounded-full transition-all duration-300"
+              className="bg-gradient-to-r from-violet-500 to-blue-500 h-2 rounded-full transition-all duration-300"
               style={{ width: `${(userStats.xp / (userStats.xp + userStats.xpToNext)) * 100}%` }}
-            ></div>
+            />
           </div>
         </div>
 
         {/* Streak */}
-        <div className="flex items-center gap-2">
-          <Timer className="w-4 h-4 text-orange-400" />
-          <span className="text-sm">{userStats.streak} day streak! 🔥</span>
+        <div className="flex items-center gap-2 text-sm">
+          <Flame className="w-4 h-4 text-orange-400" />
+          <span>{userStats.streak} day streak</span>
         </div>
       </div>
 
@@ -83,38 +89,36 @@ export function Sidebar({ activeView, setActiveView, userStats }: SidebarProps) 
       <nav className="space-y-2">
         {menuItems.map((item) => {
           const Icon = item.icon;
-          const isActive = activeView === item.id;
+          const isActive = pathname === item.id;
           
           return (
-            <button
+            <Link
               key={item.id}
-              onClick={() => setActiveView(item.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+              href={item.id}
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
                 isActive 
-                  ? 'bg-gradient-to-r from-violet-500/20 to-blue-500/20 border border-violet-400/30 glow-effect' 
-                  : 'hover:bg-white/5 hover:scale-105'
+                  ? 'bg-gradient-to-r from-violet-500/20 to-blue-500/20 border border-violet-400/30 text-violet-300' 
+                  : 'hover:bg-white/5 text-gray-300 hover:text-white'
               }`}
             >
               <Icon className={`w-5 h-5 ${isActive ? 'text-violet-400' : 'text-gray-400'}`} />
-              <span className={`font-medium ${isActive ? 'text-white' : 'text-gray-300'}`}>
-                {item.label}
-              </span>
-            </button>
+              <span className="font-medium">{item.label}</span>
+            </Link>
           );
         })}
       </nav>
 
       {/* Quick Actions */}
-      <div className="mt-8 glass rounded-2xl p-4">
-        <h3 className="font-semibold mb-3 text-sm text-gray-300">Quick Actions</h3>
+      <div className="mt-8 pt-6 border-t border-white/10">
+        <h3 className="text-sm font-medium text-gray-400 mb-3">Quick Actions</h3>
         <div className="space-y-2">
-          <button className="w-full flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
-            <Zap className="w-4 h-4" />
-            Daily Challenge
+          <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-gray-300 hover:text-white transition-all">
+            <Timer className="w-5 h-5 text-green-400" />
+            <span className="font-medium">Start Timer</span>
           </button>
-          <button className="w-full flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
-            <Brain className="w-4 h-4" />
-            Generate Mind Map
+          <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-gray-300 hover:text-white transition-all">
+            <Zap className="w-5 h-5 text-yellow-400" />
+            <span className="font-medium">Quick Note</span>
           </button>
         </div>
       </div>

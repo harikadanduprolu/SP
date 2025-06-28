@@ -2,7 +2,8 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Link, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { signIn } from '../../lib/auth';
 import { useAuthStore } from '../../store';
 import { supabase } from '../../lib/supabase';
@@ -15,7 +16,7 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const setUser = useAuthStore(state => state.setUser);
   const setError = useAuthStore(state => state.setError);
   
@@ -37,7 +38,7 @@ export function LoginForm() {
 
       if (error) throw error;
       setUser(profile); // profile matches your local User type
-      navigate('/');
+      router.push('/');
     } catch (error) {
       setError(error as Error);
     }
@@ -88,7 +89,7 @@ export function LoginForm() {
       </div>
 
       <div className="text-sm text-center">
-        <Link to="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
+        <Link href="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
           Don't have an account? Sign up
         </Link>
       </div>
